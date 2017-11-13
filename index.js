@@ -2,10 +2,10 @@ var aws  = require('aws-sdk');
 var zlib = require('zlib');
 var async = require('async');
 
-var EVENT_SOURCE_TO_TRACK = /sns.amazonaws.com/;  
-var EVENT_NAME_TO_TRACK   = /CreateTopic/; 
+var EVENT_SOURCE_TO_TRACK = /signin.amazonaws.com/;  
+var EVENT_NAME_TO_TRACK   = /ConsoleLogin/; 
 var DEFAULT_SNS_REGION  = 'us-west-2';
-var SNS_TOPIC_ARN       = 'The ARN of your SNS topic';
+var SNS_TOPIC_ARN       = process.env.SNS_ARN;
 
 var s3 = new aws.S3();
 var sns = new aws.SNS({
@@ -55,8 +55,7 @@ exports.handler = function(event, context, callback) {
                     console.log('Publishing notification: ', record);
                     sns.publish({
                         Message:
-                            'Alert... SNS topic created: \n TopicARN=' + record.responseElements.topicArn + '\n\n' + 
-                            JSON.stringify(record),
+                            'Alert... Console Sign in detected! \n User Name: ' + record.userIdentity.userName + '\n' + 'Region: '+ record.awsRegion + '\n'+ 'Source IP: '+ record.sourceIPAddress+'\n',
                         TopicArn: SNS_TOPIC_ARN
                     }, publishComplete);
                 },
@@ -72,3 +71,4 @@ exports.handler = function(event, context, callback) {
         callback(null,"message");
     });
 };
+
