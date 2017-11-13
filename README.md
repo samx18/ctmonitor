@@ -65,8 +65,8 @@ Create a new lambda function and upload the zip of the deployment package. Choos
 	--statement-id Id-1 \
 	--action "lambda:InvokeFunction" \
 	--principal s3.amazonaws.com \
-	--source-arn arn:aws:s3:::ctrctbucket \
-	--source-account 515673414420 
+	--source-arn arn:aws:s3:::examplebucket \
+	--source-account 012345678912
 
 
 ## Validate permissions
