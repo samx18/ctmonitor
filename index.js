@@ -62,7 +62,7 @@ exports.handler = function(event, context, callback) {
                             'Alert... Console Sign in detected! \n'+'User Name: ' + record.userIdentity.userName + '\n' + 'Region: '+ record.awsRegion + '\n'+ 'Source IP: '+ record.sourceIPAddress+'\n',
                         TopicArn: SNS_TOPIC_ARN
                     }, publishComplete);
-                    var data = 'Alert... Console Sign in detected! \n'+'User Name: ' + '`'+record.userIdentity.userName + '`'+'\n' + 'Region: '+ '`'+record.awsRegion +'`'+ '\n'+ 'Source IP: '+ '`'+record.sourceIPAddress+'`'+'\n'
+                    var data = ':rotating_light: Console Sign in detected! \n'+'User Name: ' + '`'+record.userIdentity.userName + '`'+'\n' + 'Region: '+ '`'+record.awsRegion +'`'+ '\n'+ 'Source IP: '+ '`'+record.sourceIPAddress+'`'+'\n'
 
                     const slackMessage = {
                     channel: slackChannel,
