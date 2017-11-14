@@ -1,11 +1,15 @@
 var aws  = require('aws-sdk');
 var zlib = require('zlib');
 var async = require('async');
-
+const url = require('url');
+const http = require('http');
+const https = require('https');
 var EVENT_SOURCE_TO_TRACK = /signin.amazonaws.com/;  
 var EVENT_NAME_TO_TRACK   = /ConsoleLogin/; 
 var DEFAULT_SNS_REGION  = 'us-west-2';
 var SNS_TOPIC_ARN       = process.env.SNS_ARN;
+const slackChannel = '#bot-testing';
+const hookUrl = process.env.SLACK_WEBHOOK;
 
 var s3 = new aws.S3();
 var sns = new aws.SNS({
@@ -55,9 +59,35 @@ exports.handler = function(event, context, callback) {
                     console.log('Publishing notification: ', record);
                     sns.publish({
                         Message:
-                            'Alert... Console Sign in detected! \n User Name: ' + record.userIdentity.userName + '\n' + 'Region: '+ record.awsRegion + '\n'+ 'Source IP: '+ record.sourceIPAddress+'\n',
+                            'Alert... Console Sign in detected! \n'+'User Name: ' + record.userIdentity.userName + '\n' + 'Region: '+ record.awsRegion + '\n'+ 'Source IP: '+ record.sourceIPAddress+'\n',
                         TopicArn: SNS_TOPIC_ARN
                     }, publishComplete);
+                    var data = 'Alert... Console Sign in detected! \n'+'User Name: ' + '`'+record.userIdentity.userName + '`'+'\n' + 'Region: '+ '`'+record.awsRegion +'`'+ '\n'+ 'Source IP: '+ '`'+record.sourceIPAddress+'`'+'\n'
+
+                    const slackMessage = {
+                    channel: slackChannel,
+                    text: data
+                    };
+                    const body = JSON.stringify(slackMessage);
+                    const options = url.parse(hookUrl);
+                    options.method = 'POST';
+                    options.headers = {
+                        'Content-Type': 'application/json',
+                        'Content-Length': Buffer.byteLength(body),
+                    };
+            
+                    
+                    var post_req = https.request(options, function(res) {
+                    // debug response from webhook
+                    // res.setEncoding('utf8');
+                    // res.on('data', function (chunk) {
+                    //     console.log('Response: ' + chunk);
+                    // });
+                    });
+
+                    // post the data
+                    post_req.write(JSON.stringify( slackMessage ));
+                    post_req.end();
                 },
                 next
             );

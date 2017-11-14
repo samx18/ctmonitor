@@ -81,4 +81,5 @@ Go to S3 properties and add notifications under the advanced Settings section. C
 
 ## Environment variables 
 
-	process.env.SNS_ARN;
+	process.env.SNS_ARN; -> ARN for your SNS notification
+	process.env.SLACK_WEBHOOK; -> WEBHOOK URL for Slack integration
